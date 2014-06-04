@@ -146,7 +146,7 @@ layers {
   }
 }
 layers {
-  name: "relu3"
+  name: "relu4"
   type: RELU
   bottom: "conv4"
   top: "conv4"
