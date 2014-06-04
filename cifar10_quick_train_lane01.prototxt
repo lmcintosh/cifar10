@@ -18,7 +18,7 @@ layers {
   blobs_lr: 1
   blobs_lr: 2
   convolution_param {
-    num_output: 8
+    num_output: 32
     pad: 2
     kernel_size: 5
     stride: 1
@@ -94,7 +94,7 @@ layers {
   blobs_lr: 1
   blobs_lr: 2
   convolution_param {
-    num_output: 56
+    num_output: 64
     pad: 2
     kernel_size: 5
     stride: 1
@@ -125,9 +125,27 @@ layers {
   }
 }
 layers {
-  name: "ip2"
+  name: "ip1"
   type: INNER_PRODUCT
   bottom: "pool3"
+  top: "ip1"
+  blobs_lr: 1
+  blobs_lr: 2
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "gaussian"
+      std: 0.1
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layers {
+  name: "ip2"
+  type: INNER_PRODUCT
+  bottom: "ip1"
   top: "ip2"
   blobs_lr: 1
   blobs_lr: 2
