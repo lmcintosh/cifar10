@@ -186,8 +186,8 @@ layers {
 layers {
   name: "relu5"
   type: RELU
-  bottom: "conv4"
-  top: "conv4"
+  bottom: "conv5"
+  top: "conv5"
 }
 layers {
   name: "pool5"
