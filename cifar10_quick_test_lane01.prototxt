@@ -1,11 +1,11 @@
-name: "CIFAR10_quick_test"
+name: "CIFAR10_quick_train"
 layers {
   name: "cifar"
   type: DATA
   top: "data"
   top: "label"
   data_param {
-    source: "cifar10-leveldb/cifar-test-leveldb"
+    source: "cifar10-leveldb/cifar-train-leveldb"
     mean_file: "mean.binaryproto"
     batch_size: 100
   }
@@ -18,7 +18,7 @@ layers {
   blobs_lr: 1
   blobs_lr: 2
   convolution_param {
-    num_output: 40
+    num_output: 24
     pad: 2
     kernel_size: 5
     stride: 1
@@ -56,7 +56,7 @@ layers {
   blobs_lr: 1
   blobs_lr: 2
   convolution_param {
-    num_output: 32
+    num_output: 24
     pad: 2
     kernel_size: 5
     stride: 1
@@ -132,7 +132,7 @@ layers {
   blobs_lr: 1
   blobs_lr: 2
   convolution_param {
-    num_output: 8
+    num_output: 24
     pad: 2
     kernel_size: 5
     stride: 1
@@ -162,11 +162,48 @@ layers {
     stride: 2
   }
 }
-
+layers {
+  name: "conv5"
+  type: CONVOLUTION
+  bottom: "pool4"
+  top: "conv5"
+  blobs_lr: 1
+  blobs_lr: 2
+  convolution_param {
+    num_output: 24
+    pad: 2
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layers {
+  name: "relu5"
+  type: RELU
+  bottom: "conv4"
+  top: "conv4"
+}
+layers {
+  name: "pool5"
+  type: POOLING
+  bottom: "conv5"
+  top: "pool5"
+  pooling_param {
+    pool: AVE
+    kernel_size: 3
+    stride: 2
+  }
+}
 layers {
   name: "ip2"
   type: INNER_PRODUCT
-  bottom: "pool4"
+  bottom: "pool5"
   top: "ip2"
   blobs_lr: 1
   blobs_lr: 2
