@@ -125,27 +125,9 @@ layers {
   }
 }
 layers {
-  name: "ip1"
-  type: INNER_PRODUCT
-  bottom: "pool3"
-  top: "ip1"
-  blobs_lr: 1
-  blobs_lr: 2
-  inner_product_param {
-    num_output: 64
-    weight_filler {
-      type: "gaussian"
-      std: 0.1
-    }
-    bias_filler {
-      type: "constant"
-    }
-  }
-}
-layers {
   name: "ip2"
   type: INNER_PRODUCT
-  bottom: "ip1"
+  bottom: "pool3"
   top: "ip2"
   blobs_lr: 1
   blobs_lr: 2
