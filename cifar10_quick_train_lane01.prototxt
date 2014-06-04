@@ -18,7 +18,7 @@ layers {
   blobs_lr: 1
   blobs_lr: 2
   convolution_param {
-    num_output: 32
+    num_output: 8
     pad: 2
     kernel_size: 5
     stride: 1
@@ -56,7 +56,7 @@ layers {
   blobs_lr: 1
   blobs_lr: 2
   convolution_param {
-    num_output: 32
+    num_output: 16
     pad: 2
     kernel_size: 5
     stride: 1
@@ -125,9 +125,48 @@ layers {
   }
 }
 layers {
+  name: "conv4"
+  type: CONVOLUTION
+  bottom: "pool3"
+  top: "conv4"
+  blobs_lr: 1
+  blobs_lr: 2
+  convolution_param {
+    num_output: 48
+    pad: 2
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layers {
+  name: "relu3"
+  type: RELU
+  bottom: "conv4"
+  top: "conv4"
+}
+layers {
+  name: "pool4"
+  type: POOLING
+  bottom: "conv4"
+  top: "pool4"
+  pooling_param {
+    pool: AVE
+    kernel_size: 3
+    stride: 2
+  }
+}
+
+layers {
   name: "ip2"
   type: INNER_PRODUCT
-  bottom: "pool3"
+  bottom: "pool4"
   top: "ip2"
   blobs_lr: 1
   blobs_lr: 2
