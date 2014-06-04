@@ -27,8 +27,9 @@ def getLayers(lines_train):
 
 
 
-def numLayers(namesOfLayers):
+def numLayers(lines_train):
     '''Returns the number of convolutional layers in a caffe convolutional neural network.'''
+    (indicesOfLayers, namesOfLayers) = getLayers(lines_train)
     convLayers = [(namesOfLayers[i].find('conv') > 0) for i in xrange(len(namesOfLayers))]
     return sum(convLayers)
 
@@ -47,8 +48,6 @@ def numNeurons(lines_train):
     for (idx,l) in enumerate(lines_train):
         if l.find('num_output') > 0:
             num_output.append(([int(s) for s in l.split() if s.isdigit()])[0])
-        if l.find('kernel_size') > 0 and lines_train[idx-1].find('pool') < 0:
-            kernel_size.append(([int(s) for s in l.split() if s.isdigit()])[0])
         if l.find('stride') > 0:
             stride.append(([int(s) for s in l.split() if s.isdigit()])[0])
 
@@ -57,7 +56,7 @@ def numNeurons(lines_train):
         my_stride = product(stride[0:(2*idx+1)])
         neurons.append(nFeatureMaps * (pixel_res/my_stride) * (pixel_res/my_stride)) 
     
-    return sum(neurons)
+    return neurons, sum(neurons)
 
 
 
@@ -67,11 +66,37 @@ def numParameters(lines_train):
     # params = # feature maps * (kernel depth * kernel height * kernel width) + # feature maps (bias)
     e.g. original conv3 has 64*(32*5*5) + 64 = 51264 parameters.
     '''
+    num_output  = []
+    kernel_size = []
+    stride      = []
+
+    for (idx,l) in enumerate(lines_train):
+        if l.find('num_output') > 0:
+            num_output.append(([int(s) for s in l.split() if s.isdigit()])[0])
+        if l.find('stride') > 0:
+            stride.append(([int(s) for s in l.split() if s.isdigit()])[0])
+        if l.find('kernel_size') > 0 and lines_train[idx-1].find('pool') < 0:
+            kernel_size.append(([int(s) for s in l.split() if s.isdigit()])[0])
     
+    kernel_size.append(num_output[-2])  # for fully connected inner product layer
+
+    params = []
+    for (idx,nFeatureMaps) in enumerate(num_output):
+        if idx == 0:
+            kernel_depth = 3    # color channels in data
+        else:
+            kernel_depth = num_output[idx-1]
+
+        if idx != len(num_output)-1:
+            params.append(nFeatureMaps * (kernel_depth*kernel_size[idx]*kernel_size[idx]) + nFeatureMaps)
+        else:
+            all_stride = product(stride)
+            params.append(nFeatureMaps * num_output[idx-1] * (pixel_res/all_stride) * (pixel_res/all_stride) + nFeatureMaps)
+
+    return params, sum(params)
 
 
 
-    return nParams
 
 f = open('param_dir/cifar10_quick_train_lane01-N-K-S.txt')
 f.write('\n'.join(translated_stuff))
