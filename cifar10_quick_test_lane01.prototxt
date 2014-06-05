@@ -18,7 +18,7 @@ layers {
   blobs_lr: 1
   blobs_lr: 2
   convolution_param {
-    num_output: 40
+    num_output: 48
     pad: 2
     kernel_size: 5
     stride: 1
@@ -56,7 +56,7 @@ layers {
   blobs_lr: 1
   blobs_lr: 2
   convolution_param {
-    num_output: 56
+    num_output: 48
     pad: 2
     kernel_size: 5
     stride: 1
