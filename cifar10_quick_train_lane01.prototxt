@@ -47,6 +47,7 @@ layers {
     kernel_size: 3
     stride: 2
   }
+}
 layers {
   name: "ip2"
   type: INNER_PRODUCT
